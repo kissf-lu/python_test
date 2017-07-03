@@ -57,6 +57,7 @@ class BroadcastPipe(object):
 
     def put(self, value):
         """Broadcast a *value* to all receivers."""
+        #  print('put pipe msg', (self.pipes))
         if not self.pipes:
             raise RuntimeError('There are no output pipes.')
         events = [store.put(value) for store in self.pipes]
@@ -87,6 +88,7 @@ def message_generator(name, env, out_pipe):
         # the event.triggered will be True in the other order it will be
         # False
         msg = (env.now, '%s says hello at %d' % (name, env.now))
+        print('message gen type', msg)
         out_pipe.put(msg)
 
 
@@ -95,7 +97,7 @@ def message_consumer(name, env, in_pipe):
     while True:
         # Get event for message pipe
         msg = yield in_pipe.get()
-        yield env.timeout(1)
+        # yield env.timeout(1) # test LATE Getting module
         if msg[0] < env.now:
             # if message was already put into pipe, then
             # message_consumer was late getting to it. Depending on what
@@ -113,28 +115,27 @@ def message_consumer(name, env, in_pipe):
         yield env.timeout(random.randint(4, 8))
 
 
-
-if __name__ =='__main__':
+if __name__ == '__main__':
     # Setup and start the simulation
     print('Process communication')
     random.seed(RANDOM_SEED)
-    env = simpy.Environment()
-
-    # For one-to-one or many-to-one type pipes, use Store
-    pipe = simpy.Store(env)
-    env.process(message_generator('Generator A', env, pipe))
-    env.process(message_consumer('Consumer A', env, pipe))
-
-    print('\nOne-to-one pipe communication\n')
-    env.run(until=SIM_TIME)
+    # env = simpy.Environment()
+    #
+    # # For one-to-one or many-to-one type pipes, use Store
+    # pipe = simpy.Store(env)
+    # env.process(message_generator('Generator A', env, pipe))
+    # env.process(message_consumer('Consumer A', env, pipe))
+    #
+    # print('\nOne-to-one pipe communication\n')
+    # env.run(until=SIM_TIME)
     # For one-to many use BroadcastPipe
     # (Note: could also be used for one-to-one,many-to-one or many-to-many)
     env = simpy.Environment()
     bc_pipe = BroadcastPipe(env)
 
-    env.process(message_generator('Generator A', env, bc_pipe))
     env.process(message_consumer('Consumer A', env, bc_pipe.get_output_conn()))
     env.process(message_consumer('Consumer B', env, bc_pipe.get_output_conn()))
+    env.process(message_generator('Generator A', env, bc_pipe))
 
     print('\nOne-to-many pipe communication\n')
     env.run(until=SIM_TIME)
