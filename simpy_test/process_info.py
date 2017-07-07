@@ -131,8 +131,12 @@ if __name__ == '__main__':
     # For one-to many use BroadcastPipe
     # (Note: could also be used for one-to-one,many-to-one or many-to-many)
     env = simpy.Environment()
+    env.all_of()
     bc_pipe = BroadcastPipe(env)
-
+    #  first put tow Story into pips of BroadcastPipe,
+    # then story message from message generator.
+    # Consumer A or B call get_output_conn method creating tow Story obj appended into pipes
+    # to obtain  his return value of pipes for message_consumer.
     env.process(message_consumer('Consumer A', env, bc_pipe.get_output_conn()))
     env.process(message_consumer('Consumer B', env, bc_pipe.get_output_conn()))
     env.process(message_generator('Generator A', env, bc_pipe))
