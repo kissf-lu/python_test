@@ -2,7 +2,7 @@ from simpy import Environment, Resource
 
 
 def print_stats(res):
-    print(print('%d of %d slots are allocated.' % (res.count, res.capacity)))
+    print('%d of %d slots are allocated.' % (res.count, res.capacity))
     print('  Users:', res.users)
     print('  Queued events:', res.queue)
 
@@ -10,7 +10,8 @@ def print_stats(res):
 def user(res):
     print('in')
     with res.request() as req:
-        yield req
+        ack = yield req
+        print(res.count, 'tag')
         print_stats(res)
     print('out')
 

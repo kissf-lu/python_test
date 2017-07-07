@@ -15,6 +15,7 @@ class B(A):
         print('enter B')
         super(B, self).__init__(name_a)
         print('leave B')
+    and_d = '\nrr'
 
 
 class C(A):
@@ -37,5 +38,6 @@ class D(B, C):
 
 if __name__ == '__main__':
         sub_d = D('A')
+        bb = B('A')
         name = sub_d.add_name
-        print(name)
+        print(name, bb.and_d)
