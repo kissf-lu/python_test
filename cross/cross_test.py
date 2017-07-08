@@ -10,7 +10,7 @@
 from simpy import Environment
 from simpy import PriorityStore
 from simpy import PriorityItem
-from src.machine.cross import Cross
+from cross import Cross
 import random as rd
 
 
