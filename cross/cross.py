@@ -44,7 +44,6 @@ class Cross(object):
         """
         """
         if self.input_dic:
-            print('in get package queue')
             for get_package_queue in self.input_dic.values():
                 self.env.process(self._get_packages(get_package_queue))
         else:
@@ -55,12 +54,14 @@ class Cross(object):
         """
         while True:
             packages = yield get_package_queue.get()
-            print(packages)
+            print(f"------->package {packages.item['package_id']}", 'was push to next queue at', self.env.now)
             self.env.process(self._put_packages_into_out_queue(packages))
+            yield self.env.timeout(2)
 
     def _put_packages_into_out_queue(self, package):
         """
         """
-        while True:
-            yield self.out_put.put(PriorityItem(priority=self.env.now, item=package))
+        yield self.out_put.put(PriorityItem(priority=self.env.now, item=package))
 
+    # def run(self):
+    #     self._get_package_queue()

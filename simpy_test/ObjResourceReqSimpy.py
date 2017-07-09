@@ -56,7 +56,7 @@ def resource_run(env):
     car_arrive_gap = 0
     bcs = Resource(env, capacity=2)
     for i in range(6):
-        car_arrive_time = car_arrive_gap
+        car_arrive_time = car_arrive_gap*i
         env.process(car_req(env, 'Car %d' % i, bcs, car_arrive_time, 5))
     env.run()
     run_t =time.time() - begin_t

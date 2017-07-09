@@ -7,19 +7,20 @@ def print_stats(res):
     print('  Queued events:', res.queue)
 
 
-def user(res):
-    print('in')
+def user(env, res):
+    yield env.timeout(2)
+    print('in at', env.now)
     with res.request() as req:
         ack = yield req
         print(res.count, 'tag')
         print_stats(res)
-    print('out')
+        print('out')
 
 
 if __name__  == '__main__':
     env = Environment()
     res = Resource(env, capacity=2)
     for i in range(5):
-        env.process(user(res))
+        env.process(user(env, res))
     # procs = [env.process(user(res)), env.process(user(res))]
     env.run()

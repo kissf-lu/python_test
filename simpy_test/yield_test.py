@@ -42,6 +42,7 @@ def fab(iter_max):
     while n < iter_max:
         yield b
         a, b, = b, a+b
+        # print(n,'tag')
         n += 1
 
 
@@ -93,8 +94,12 @@ class CarBcs(object):
         self.env.run()
 
 if __name__ == '__main__':
-    rm.seed(7)
-    env = simpy.Environment()
-    bsc = CarBcs(env, 5, 2)
-    bsc.run()
+    # rm.seed(7)
+    # env = simpy.Environment()
+    # bsc = CarBcs(env, 5, 2)
+    # bsc.run()
+    f = fab(7)
+    for i in f:
+        print(i)
+
 

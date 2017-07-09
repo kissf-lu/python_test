@@ -78,7 +78,7 @@ def message_generator(name, env, out_pipe):
     """A process which randomly generates messages."""
     while True:
         # wait for next transmission
-        yield env.timeout(random.randint(6, 10))
+        yield env.timeout(random.randint(2, 3))
 
         # messages are time stamped to later check if the consumer was
         # late getting them.  Note, using event.triggered to do this may
@@ -88,7 +88,7 @@ def message_generator(name, env, out_pipe):
         # the event.triggered will be True in the other order it will be
         # False
         msg = (env.now, '%s says hello at %d' % (name, env.now))
-        print('message gen type', msg)
+        # print('message gen type', msg)
         out_pipe.put(msg)
 
 
@@ -131,7 +131,6 @@ if __name__ == '__main__':
     # For one-to many use BroadcastPipe
     # (Note: could also be used for one-to-one,many-to-one or many-to-many)
     env = simpy.Environment()
-    env.all_of()
     bc_pipe = BroadcastPipe(env)
     #  first put tow Story into pips of BroadcastPipe,
     # then story message from message generator.
@@ -142,4 +141,4 @@ if __name__ == '__main__':
     env.process(message_generator('Generator A', env, bc_pipe))
 
     print('\nOne-to-many pipe communication\n')
-    env.run(until=SIM_TIME)
+    env.run(until=20)
