@@ -56,12 +56,9 @@ class Cross(object):
             packages = yield get_package_queue.get()
             print(f"------->package {packages.item['package_id']}", 'was push to next queue at', self.env.now)
             self.env.process(self._put_packages_into_out_queue(packages))
-            yield self.env.timeout(2)
+            # yield self.env.timeout(2)
 
     def _put_packages_into_out_queue(self, package):
         """
         """
         yield self.out_put.put(PriorityItem(priority=self.env.now, item=package))
-
-    # def run(self):
-    #     self._get_package_queue()

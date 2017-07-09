@@ -21,7 +21,7 @@ import simpy
 
 RANDOM_SEED = 42
 TICKETS = 50  # Number of tickets per movie
-SIM_TIME = 120  # Simulate until
+SIM_TIME = 200  # Simulate until
 
 
 def moviegoer(env, movie, num_tickets, theater):
@@ -40,9 +40,9 @@ def moviegoer(env, movie, num_tickets, theater):
     with theater.counter.request() as my_turn:
         # Wait until its our turn or until the movie is sold out
         result = yield my_turn | theater.sold_out[movie]
-
         # Check if it's our turn of if movie is sold out
         if my_turn not in result:
+            # print(my_turn, '----', result, 'at', env.now)
             theater.num_renegers[movie] += 1
             env.exit()
 
