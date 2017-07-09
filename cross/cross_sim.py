@@ -34,7 +34,7 @@ def machine_package(env, generator_queue_res):
     while True:
         env.process(machine_queue_input(env, generator_queue_res, num))
         num += 1
-        yield env.timeout(rd.randint(7,10))
+        yield env.timeout(1)
 
 
 def machine_queue_input(env, generator_queue_res, package_id):
@@ -45,7 +45,7 @@ def machine_queue_input(env, generator_queue_res, package_id):
         id_queue = str(choice(INPUT_QUEUE_ID))
         id_package = ''.join([id_queue, '_', str(package_id)])
         package_items = {'package_id': id_package, 'package_gen_time': env.now}
-        print('put package', package_id, 'into queue', id_queue, 'at', env.now)
+        # print('put package', package_id, 'into queue', id_queue, 'at', env.now)
         yield INPUT_QUEUE_DIC[id_queue].put(PriorityItem(priority=env.now, item=package_items))
         # print('queue', id_queue,'info:', INPUT_QUEUE_DIC[id_queue].items) rd.randint(2, 30)
         # yield env.timeout(2)
@@ -61,7 +61,7 @@ def cross_sim():
     env.process(machine_package(env=env, generator_queue_res=generator_queue_res))
     OUTPUT_QUEUE = PriorityStore(env)
     cross = Cross(env=env, id_x=CROSS_ID, input_dic=INPUT_QUEUE_DIC, out_put=OUTPUT_QUEUE)
-    env.run()
+    env.run(until=50)
 
 
 if __name__ == '__main__':

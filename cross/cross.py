@@ -44,19 +44,20 @@ class Cross(object):
         """
         """
         if self.input_dic:
-            for get_package_queue in self.input_dic.values():
-                self.env.process(self._get_packages(get_package_queue))
+            for queue_id, get_package_queue in self.input_dic.items():
+                self.env.process(self._get_packages(queue_id, get_package_queue))
         else:
             raise RuntimeError('Please Initial input port Queue for Cross instance First!')
 
-    def _get_packages(self, get_package_queue):
+    def _get_packages(self, queue_id, get_package_queue):
         """
         """
         while True:
+            yield self.env.timeout(10)
+            print('len of package_queue', queue_id , 'is', len(get_package_queue.items), 'at', self.env.now)
             packages = yield get_package_queue.get()
             print(f"------->package {packages.item['package_id']}", 'was push to next queue at', self.env.now)
             self.env.process(self._put_packages_into_out_queue(packages))
-            # yield self.env.timeout(2)
 
     def _put_packages_into_out_queue(self, package):
         """

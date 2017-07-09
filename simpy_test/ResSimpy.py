@@ -9,17 +9,18 @@ def print_stats(res):
 
 def user(env, res):
     with res.request() as req:
-        print('req----->:', req)
         yield req
-        print(f'{ack}  uer obj is--->', res.users[0])
+        print('req----->:', req, env.now)
+        print('uer obj is--->', res.users[0], 'at', env.now)
         print_stats(res)
+        # yield env.timeout(1)
         print('out at', env.now)
-        yield env.timeout(2)
+    yield env.timeout(2)
 
 
 if __name__  == '__main__':
     env = Environment()
     res = Resource(env, capacity=2)
-    for i in range(5):
+    for i in range(6):
         env.process(user(env, res))
     env.run()
