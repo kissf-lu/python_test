@@ -1,27 +1,13 @@
-"""
-Movie renege example
 
-Covers:
 
-- Resources: Resource
-- Condition events
-- Shared events
-
-Scenario:
-  A movie theatre has one ticket counter selling tickets for three
-  movies (next show only). When a movie is sold out, all people waiting
-  to buy tickets for that movie renege (leave queue).
-
-"""
 import collections
 import random
-
 import simpy
 
 
 RANDOM_SEED = 42
 TICKETS = 50  # Number of tickets per movie
-SIM_TIME = 200  # Simulate until
+SIM_TIME = 8  # Simulate until
 
 
 def moviegoer(env, movie, num_tickets, theater):
@@ -38,50 +24,39 @@ def moviegoer(env, movie, num_tickets, theater):
 
     """
     with theater.counter.request() as my_turn:
-        # Wait until its our turn or until the movie is sold out
-        print(my_turn, '<----', 'at', env.now)
-        result = yield my_turn | theater.sold_out[movie]
-        # Check if it's our turn of if movie is sold out
-        if my_turn not in result:
-            # print(my_turn, '---->', result, 'at', env.now)
-            theater.num_renegers[movie] += 1
-            env.exit()
-
-        # Check if enough tickets left.
-        if theater.available[movie] < num_tickets:
-            # Moviegoer leaves after some discussion
-            # print('need', movie, 'ticket', num_tickets, 'but only have', theater.available[movie], 'at', env.now)
-            yield env.timeout(0.5)
-            env.exit()
-
-        # Buy tickets
-        theater.available[movie] -= num_tickets
-        if theater.available[movie] < 2:
-            # print(movie, 'sold out at', env.now)
-            # Trigger the "sold out" event for the movie
-            print('init<---->',theater.sold_out[movie], 'at', env.now)
-            theater.sold_out[movie].succeed()
-            theater.when_sold_out[movie] = env.now
-            theater.available[movie] = 0
+        # 顾客每隔1秒会来排队申请服务生资源（售票员）， 每一个客户对应一个process的处理事件
+        # 资源池被动的根据顾客请求 按照 my_turn 服务资源(售票员)的能力(个数)， 提供给顾客几个服务
+        # 每个顾客的process 都会加入 request 的queue队列资源池中, 等待正在被服务的user 顾客释放出
+        # user的服务资源，以便获取服务。
+        # 每个顾客的服务都是独立的进行的，受限的是服务的资源，只有有资源，顾客才能获得服务
+        # 所以上一个顾客的服务时延会影响下一个顾客的服务时间。在同一时间点，越早的process会越先出
+        # 现在服务的行中。
+        print('*-', movie, 'request process at-->', env.now)
+        yield my_turn
+        # 申请得到资源的process开始处理事务
+        print('**-', movie, 'request obtain process at-->', env.now)
+        if movie == 'Kill Process':
+            # Kill Process 电影多占用2秒处理时间
+            # 每个yield 的 env 都对应每一个process
+            yield env.timeout(2)
+        # 所有电影都必须有1秒处理时间才能释放资源
         yield env.timeout(1)
+        print('***-', movie, ' release process--at', env.now)
 
 
 def customer_arrivals(env, theater):
     """Create new *moviegoers* until the sim time reaches 120."""
     while True:
-        yield env.timeout(random.expovariate(1 / 0.5))
-
+        yield env.timeout(1)
         movie = random.choice(theater.movies)
         num_tickets = random.randint(1, 6)
         # print(movie, 'need', num_tickets, 'at', env.now)
         if theater.available[movie]:
             env.process(moviegoer(env, movie, num_tickets, theater))
 
-
 Theater = collections.namedtuple('Theater', 'counter, movies, available, '
                                             'sold_out, when_sold_out, '
                                             'num_renegers')
-
 
 # Setup and start the simulation
 print('Movie renege')
@@ -101,11 +76,3 @@ theater = Theater(counter, movies, available, sold_out, when_sold_out,
 # Start process and run
 env.process(customer_arrivals(env, theater))
 env.run(until=SIM_TIME)
-
-# Analysis/results
-for movie in movies:
-    if theater.sold_out[movie]:
-        print('Movie "%s" sold out %.1f minutes after ticket counter '
-              'opening.' % (movie, theater.when_sold_out[movie]))
-        print('  Number of people leaving queue when film sold out: %s' %
-              theater.num_renegers[movie])
