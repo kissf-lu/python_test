@@ -12,10 +12,12 @@ def user(env, res):
         yield req
         print('req----->:', req, env.now)
         print('uer obj is--->', res.users[0], 'at', env.now)
+        yield env.timeout(1)
         print_stats(res)
-        # yield env.timeout(1)
         print('out at', env.now)
+
     yield env.timeout(2)
+    print('out with----------------------------------------------------', env.now)
 
 
 if __name__  == '__main__':

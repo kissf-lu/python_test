@@ -39,11 +39,13 @@ class Fab(object):
 
 def fab(iter_max):
     n, a, b = 0, 0, 1
-    while n < iter_max:
+    while 1:
         yield b
         a, b, = b, a+b
         # print(n,'tag')
         n += 1
+        if n >=10:
+            break
 
 
 def process_sim(env, while_max):
