@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 
 
+from os.path import realpath, join, split
+
+
+class SaveConfig:
+
+    DATA_DIR = join( split(split(split(realpath(__file__))[0])[0])[0], 'data')
+
 class A(object):
     def __init__(self, name_a):
         # super(A, self).__init__()
