@@ -8,7 +8,7 @@ def generator_pack(env, pack_queue):
     i = 0
     while True:
 
-        pack = simpy.PriorityItem(env.now, {'id':env.now, 'name': i})
+        pack = {'id':env.now, 'name': i}
         yield pack_queue.put(pack)
         print('%d package was put at %d' % (i, env.now))
         #  print('all packages num: ', len(issues.items))
@@ -21,13 +21,13 @@ def consumer_pack(env, pack_queue):
     while True:
         package = yield pack_queue.get()
         yield env.timeout(1)
-        print('consumer time:', env.now, 'package id:', package.item['id'],  'package name ', package.item['name'])
+        print('consumer time:', env.now, 'package id:', package)
 
 
 if __name__ == '__main__':
     rm.seed(42)
     env = simpy.Environment()
-    queue = simpy.PriorityStore(env)
+    queue = simpy.Store(env)
     _ = env.process(generator_pack(env, queue))
     _ = env.process(consumer_pack(env, queue))
     env.run(until=10)
