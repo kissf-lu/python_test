@@ -10,7 +10,6 @@ class SaveConfig:
 
 class A(object):
     def __init__(self, name_a):
-        # super(A, self).__init__()
         print('enter A')
         self.name = name_a
         print('leave A')
@@ -18,9 +17,8 @@ class A(object):
 
 class B(A):
     def __init__(self,name_a):
-        # self.name_b = name_b
         print('enter B')
-        super(B, self).__init__(name_a)
+        super().__init__(name_a)
         print('leave B')
     and_d = '\nrr'
 
@@ -28,15 +26,14 @@ class B(A):
 class C(A):
     def __init__(self, name_a):
         print('enter C')
-        super(C, self).__init__(name_a)
+        super().__init__(name_a)
         print('leave C')
 
 
 class D(B, C):
     def __init__(self, name_a):
         print('enter D')
-        # super(D, self).__init__(name_b)
-        super(D, self).__init__(name_a)
+        super().__init__(name_a)
         print('leave D')
 
     @property
@@ -45,6 +42,6 @@ class D(B, C):
 
 if __name__ == '__main__':
         sub_d = D('A')
-        bb = B('A')
-        name = sub_d.add_name
-        print(name, bb.and_d)
+        # bb = B('A')
+        # name = sub_d.add_name
+        # print(name, bb.and_d)
