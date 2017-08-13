@@ -40,6 +40,10 @@ class D(B, C):
     def add_name(self):
         return f"name sub is :{self.name}"
 
+
+
+
+
 if __name__ == '__main__':
         sub_d = D('A')
         # bb = B('A')
