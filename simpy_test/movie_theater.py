@@ -39,8 +39,9 @@ def moviegoer(env, movie, num_tickets, theater):
     """
     with theater.counter.request() as my_turn:
         # Wait until its our turn or until the movie is sold out
-        print(my_turn, '<----', 'at', env.now)
+        # print(my_turn, '<----', 'at', env.now)
         result = yield my_turn | theater.sold_out[movie]
+        # print(result, '<---->', 'at', env.now)
         # Check if it's our turn of if movie is sold out
         if my_turn not in result:
             # print(my_turn, '---->', result, 'at', env.now)
@@ -59,8 +60,9 @@ def moviegoer(env, movie, num_tickets, theater):
         if theater.available[movie] < 2:
             # print(movie, 'sold out at', env.now)
             # Trigger the "sold out" event for the movie
-            print('init<---->',theater.sold_out[movie], 'at', env.now)
+            print(f'{movie}<---->',theater.sold_out[movie], 'at', env.now)
             theater.sold_out[movie].succeed()
+            print(f'{movie}<---->',theater.sold_out[movie], 'at', env.now)
             theater.when_sold_out[movie] = env.now
             theater.available[movie] = 0
         yield env.timeout(1)
@@ -90,7 +92,9 @@ env = simpy.Environment()
 
 # Create movie theater
 counter = simpy.Resource(env, capacity=1)
-movies = ['Python Unchained', 'Kill Process', 'Pulp Implementation']
+movies = ['Python Unchained'
+    # , 'Kill Process', 'Pulp Implementation'
+          ]
 available = {movie: TICKETS for movie in movies}
 sold_out = {movie: env.event() for movie in movies}
 when_sold_out = {movie: None for movie in movies}
