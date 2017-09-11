@@ -86,6 +86,7 @@ print(
     func_dic.__name__
 )
 
+from functools import wraps
 # if __name__ == '__main__':
     # to_dic = BinaryTree(10)
     # print(hasattr(to_dic, '__dict__'), ToDict.__dict__)
