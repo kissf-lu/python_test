@@ -102,7 +102,7 @@ num_renegers = {movie: 0 for movie in movies}
 theater = Theater(counter, movies, available, sold_out, when_sold_out,
                   num_renegers)
 
-# Start process and run
+# Start process_func and run
 env.process(customer_arrivals(env, theater))
 env.run(until=SIM_TIME)
 

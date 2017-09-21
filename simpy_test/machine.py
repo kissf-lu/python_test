@@ -123,7 +123,7 @@ def other_jobs(env, repairman):
 print('Machine shop')
 random.seed(RANDOM_SEED)  # This helps reproducing the results
 
-# Create an environment and start the setup process
+# Create an environment and start the setup process_func
 env = simpy.Environment()
 repairman = simpy.PreemptiveResource(env, capacity=1)
 machines = [Machine(env, 'Machine %d' % i, repairman)

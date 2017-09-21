@@ -48,7 +48,7 @@ def main_run():
     res_port = Resource(env=env, capacity=2)
     for i in range(NUM_PACKAGE):
         env.process(put_package_queue(env=env, id=i, res=res_port, queue=priority_store))
-    #env.process(get_package(env, priority_store))
+    #env.process_func(get_package(env, priority_store))
     env.run()
 
 

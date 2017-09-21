@@ -15,10 +15,10 @@ Scenario:
   BroadCastPipe class is constructed from Store.
 
 When Useful:
-  When a consumer process does not always wait on a generating process
+  When a consumer process_func does not always wait on a generating process_func
   and these processes run asynchronously. This example shows how to
-  create a buffer and also tell is the consumer process was late
-  yielding to the event from a generating process.
+  create a buffer and also tell is the consumer process_func was late
+  yielding to the event from a generating process_func.
 
   This is also useful when some information needs to be broadcast to
   many receiving processes
@@ -39,7 +39,7 @@ SIM_TIME = 10
 
 
 class BroadcastPipe(object):
-    """A Broadcast pipe that allows one process to send messages to many.
+    """A Broadcast pipe that allows one process_func to send messages to many.
 
     This construct is useful when message consumers are running at
     different rates than message generators and provides an event
@@ -75,7 +75,7 @@ class BroadcastPipe(object):
 
 
 def message_generator(name, env, out_pipe):
-    """A process which randomly generates messages."""
+    """A process_func which randomly generates messages."""
     while True:
         # wait for next transmission
         yield env.timeout(random.randint(2, 3))
@@ -93,7 +93,7 @@ def message_generator(name, env, out_pipe):
 
 
 def message_consumer(name, env, in_pipe):
-    """A process which consumes messages."""
+    """A process_func which consumes messages."""
     while True:
         # Get event for message pipe
         msg = yield in_pipe.get()
@@ -123,8 +123,8 @@ if __name__ == '__main__':
     #
     # # For one-to-one or many-to-one type pipes, use Store
     # pipe = simpy.Store(env)
-    # env.process(message_generator('Generator A', env, pipe))
-    # env.process(message_consumer('Consumer A', env, pipe))
+    # env.process_func(message_generator('Generator A', env, pipe))
+    # env.process_func(message_consumer('Consumer A', env, pipe))
     #
     # print('\nOne-to-one pipe communication\n')
     # env.run(until=SIM_TIME)

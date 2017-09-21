@@ -84,7 +84,7 @@ class Machine(object):
 print('Machine shop')
 random.seed(RANDOM_SEED)  # This helps reproducing the results
 
-# Create an environment and start the setup process
+# Create an environment and start the setup process_func
 env = simpy.Environment()
 machines = [Machine(env, 'Machine %d' % i)
             for i in range(NUM_MACHINES)]

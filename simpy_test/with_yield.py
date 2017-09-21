@@ -31,17 +31,17 @@ def moviegoer(env, movie, num_tickets, theater):
         # 每个顾客的服务都是独立的进行的，受限的是服务的资源，只有有资源，顾客才能获得服务
         # 所以上一个顾客的服务时延会影响下一个顾客的服务时间。在同一时间点，越早的process会越先出
         # 现在服务的行中。
-        print('*-', movie, 'request process at-->', env.now)
+        print('*-', movie, 'request process_func at-->', env.now)
         yield my_turn
         # 申请得到资源的process开始处理事务
-        print('**-', movie, 'request obtain process at-->', env.now)
+        print('**-', movie, 'request obtain process_func at-->', env.now)
         if movie == 'Kill Process':
             # Kill Process 电影多占用2秒处理时间
             # 每个yield 的 env 都对应每一个process
             yield env.timeout(2)
         # 所有电影都必须有1秒处理时间才能释放资源
         yield env.timeout(1)
-        print('***-', movie, ' release process--at', env.now)
+        print('***-', movie, ' release process_func--at', env.now)
 
 
 def customer_arrivals(env, theater):
@@ -73,6 +73,6 @@ num_renegers = {movie: 0 for movie in movies}
 theater = Theater(counter, movies, available, sold_out, when_sold_out,
                   num_renegers)
 
-# Start process and run
+# Start process_func and run
 env.process(customer_arrivals(env, theater))
 env.run(until=SIM_TIME)

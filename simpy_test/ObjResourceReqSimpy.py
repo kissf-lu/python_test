@@ -16,7 +16,7 @@ class Car(object):
         while True:
             print('Start parking and charging at %d' % self.car_env.now)
             charge_duration = 5
-            # We yield the process that process() returns
+            # We yield the process_func that process_func() returns
             # to wait for it to finish
             try:
                 yield self.car_env.process(self.charge(charge_duration))
@@ -24,7 +24,7 @@ class Car(object):
                 # When we received an interrupt, we stop charging and
                 #  switch to the "driving" state
                 print('Was interrupted. Hope, the battery is full enough ...')
-            # The charge process has finished and
+            # The charge process_func has finished and
             # we can start driving again.
             print('Start driving at %d' % self.car_env.now)
             trip_duration = 2
@@ -67,6 +67,6 @@ if __name__ == '__main__':
     env = Environment()
     resource_run(env)
     # car = Car(env)
-    # # env.process(car.driver())
+    # # env.process_func(car.driver())
     # # car.driver()
     # # env.run(until=50)

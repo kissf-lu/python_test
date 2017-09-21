@@ -57,7 +57,7 @@ class Presort(object):
 
         # 检查队列是否为空， TODO 为了跑测试程序，将第二行注释，正式程序需去掉注释
         self.empty = self.env.event()
-        # self.env.process(self.empty_queue())
+        # self.env.process_func(self.empty_queue())
 
         # 等待队列包裹数
         self.package_counts = 0

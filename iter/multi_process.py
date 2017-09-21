@@ -24,7 +24,7 @@ def user(env, res, name):
     #  with外的yield timeout不会阻塞waiting request获得服务资源,
     #
     yield env.timeout(2)
-    print(name, 'out process at',env.now)
+    print(name, 'out process_func at',env.now)
 
 
 def multi_process(env, res):
@@ -40,6 +40,6 @@ def multi_process(env, res):
 if __name__  == '__main__':
     env = Environment()
     res = Resource(env, capacity=5)
-    #  env.process(multi_process(env, res))
+    #  env.process_func(multi_process(env, res))
     multi_process(env, res)
     env.run(until=15)

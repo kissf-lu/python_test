@@ -15,7 +15,7 @@ Scenario:
   fuel reservoir. Cars randomly arrive at the gas station, request one
   of the fuel pumps and start refueling from that reservoir.
 
-  A gas station control process observes the gas station's fuel level
+  A gas station control process_func observes the gas station's fuel level
   and calls a tank truck for refueling if the station's level drops
   below a threshold.
 
@@ -56,7 +56,7 @@ def car(name, env, gas_station, fuel_pump):
         liters_required = FUEL_TANK_SIZE - fuel_tank_level
         yield fuel_pump.get(liters_required)
 
-        # The "actual" refueling process takes some time
+        # The "actual" refueling process_func takes some time
         yield env.timeout(liters_required / REFUELING_SPEED)
 
         print('%s finished refueling in %.1f seconds.' % (name,
