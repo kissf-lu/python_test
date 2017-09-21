@@ -1,9 +1,16 @@
 import threading, ctypes, time
 
+
+class Tim(object):
+    IF_TERMINAL = False
+
+
 class InterruptableThread(threading.Thread):
     @classmethod
     def _async_raise(cls, tid, excobj):
-        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(excobj))
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(
+            tid,
+            ctypes.py_object(excobj))
         if res == 0:
             raise ValueError("nonexistent thread id")
         elif res > 1:
@@ -21,25 +28,38 @@ class InterruptableThread(threading.Thread):
         self.raise_exc(SystemExit)
 
 
-def A():
-    t = InterruptableThread(target=B)
-    t.start()
-    return t
+def A(t_q):
+    t_manager = InterruptableThread(target=C)
+    for i in range(3):
+        sleep = int(i)
+        t_q.append(InterruptableThread(target=B, args=(i, sleep,)))
+    t_manager.start()
+    for t in t_q:
+        t.start()
+    t_q.append(t_manager)
+
+    return t_q
 
 
-def B():
-    # t = threading.Thread(target=C)
+def B(id, sleep):
+    # t = InterruptableThread(target=C)
     # t.start()
     for i in range(10):
-        print(i)
-        time.sleep(1)
+        print(f'[{id}] Got', i)
+        time.sleep(sleep)
+    # return t
+
 
 def C():
     for i in range(10, 20):
-        print(i)
-        time.sleep(1)
+        time.sleep(10)
+        Tim.IF_TERMINAL = True
 
-T = A()
-time.sleep(2)
-T.terminate()
-while True:pass
+t_q = []
+T = A(t_q)
+
+if Tim.IF_TERMINAL:
+    for t in T:
+        t.terminate()
+for t in T:
+    t.join()
