@@ -3,6 +3,7 @@ import threading, ctypes, time
 
 class Tim(object):
     IF_TERMINAL = False
+    P_Q = []
 
 
 class InterruptableThread(threading.Thread):
@@ -28,38 +29,55 @@ class InterruptableThread(threading.Thread):
         self.raise_exc(SystemExit)
 
 
-def A(t_q):
-    t_manager = InterruptableThread(target=C)
+def A():
     for i in range(3):
         sleep = int(i)
-        t_q.append(InterruptableThread(target=B, args=(i, sleep,)))
-    t_manager.start()
-    for t in t_q:
-        t.start()
-    t_q.append(t_manager)
+        res = InterruptableThread(target=B, args=(i, sleep,))
+        Tim.P_Q.append(res)
 
-    return t_q
+    for t in Tim.P_Q:
+        t.start()
+
+
+    t_manager = InterruptableThread(target=C,)
+    Tim.P_Q.append(t_manager)
+    t_manager.start()
+
+    for t in Tim.P_Q:
+        t.join()
+    print('stop')
+
 
 
 def B(id, sleep):
-    # t = InterruptableThread(target=C)
-    # t.start()
     for i in range(10):
         print(f'[{id}] Got', i)
-        time.sleep(sleep)
-    # return t
+        time.sleep(1)
 
 
 def C():
-    for i in range(10, 20):
-        time.sleep(10)
-        Tim.IF_TERMINAL = True
+    num = 0
+    print('C', num)
+    while True:
+        print(num)
+        time.sleep(1)
+        num +=1
+        if num == 2:
+            # for t in Tim.P_Q:
+            #     t.terminate()
+            Tim.IF_TERMINAL = True
+            print('terminal:', num)
+        #
+        if Tim.IF_TERMINAL:
+            for t in Tim.P_Q:
+                t.terminate()
+                print(t.is_alive())
 
-t_q = []
-T = A(t_q)
 
-if Tim.IF_TERMINAL:
-    for t in T:
-        t.terminate()
-for t in T:
-    t.join()
+
+
+A()
+
+print('end')
+
+while True : pass

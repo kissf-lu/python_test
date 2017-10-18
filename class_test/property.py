@@ -38,12 +38,13 @@ class Fees(object):
 from decimal import Decimal
 
 ########################################################################
-class Fees(object):
+class Feess(object):
     """"""
 
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
+        print('enter init')
         self._fee = None
 
     #----------------------------------------------------------------------
@@ -58,6 +59,7 @@ class Fees(object):
         """
         Set the fee
         """
+        print('enter setter')
         if isinstance(value, str):
             self._fee = Decimal(value)
         elif isinstance(value, Decimal):
@@ -77,6 +79,6 @@ if __name__ == '__main__':
     # f.fee='2'
     # print(f.fee)
     # del (f.fee)
-    fee=Fees()
-    fee.fee='2'
+    fee=Feess()
+    fee.fee='8'
     print(fee.fee)
