@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from collections.abc import Iterator, Iterable, Generator
 
 CHUNK_SIZE = 100
 
@@ -13,15 +13,15 @@ class StrItr(object):
         num +=1
         if num<=size:
             ite = [s for s in self.str_s]
-            return next(ite)
+            return iter(ite)
 
 
 
 def reader2(s):
-    for chunk in iter(lambda: s.rec(CHUNK_SIZE), b''):
+    for chunk in s.rec(CHUNK_SIZE):
         print(chunk)
         # process_data(data)
 
 if __name__ == '__main__':
     s = StrItr('abcdefg')
-    reader2(s)
+    print(isinstance(s.rec(6), Iterator))
