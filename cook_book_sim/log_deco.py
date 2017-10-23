@@ -50,7 +50,7 @@ def logged(
     return decorate
 
 
-@logged(user='SIM', if_file_out=False)
+@logged(user='SIM', if_file_out=True)
 def deco_logging(**kwargs):
     """
     
