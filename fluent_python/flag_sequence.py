@@ -50,7 +50,7 @@ def download_many(cc_list, load_url, verbose, max_req):
             error_msg = error_msg.format(res=exc.response)
         except requests.exceptions.ConnectionError as exc:
             error_msg = 'Connection error{res.status_code} - {res.reason}'
-            error_msg = error_msg.format(exc.response)
+            error_msg = error_msg.format(res=exc.response)
         else:
             error_msg = ''
             status = res.status

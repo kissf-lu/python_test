@@ -1,13 +1,13 @@
 #
 import collections
-
+from concurrent import futures
 import requests
 import tqdm
 
 from flag_common import main, HTTPStatus, Result, save_flag
 
 DEFAULT_CONCUR_REQ = 1
-MAX_CONCUR_REQ = 1
+MAX_CONCUR_REQ = 10
 
 
 def get_flag(cc, base_url):
@@ -39,26 +39,32 @@ def download_one(cc, base_url, verbose):
 
 def download_many(cc_list, load_url, verbose, max_req):
     counter = collections.Counter()
-    cc_iter = sorted(cc_list)
-    if not verbose:
-        cc_iter = tqdm.tqdm(cc_iter)
-    for cc in cc_iter:
-        try:
-            res = download_one(cc, load_url, verbose)
-        except requests.exceptions.HTTPError as exc:
-            error_msg = 'HTTP error {res.status_code} - {res.reason}'
-            error_msg = error_msg.format(res=exc.response)
-        except requests.exceptions.ConnectionError as exc:
-            error_msg = 'Connection error{res.status_code} - {res.reason}'
-            error_msg = error_msg.format(exc.response)
-        else:
-            error_msg = ''
-            status = res.status
-        if error_msg:
-            status = HTTPStatus.error
-        counter[status] += 1
-        if verbose and error_msg:  # <11>
-            print('*** Error for {}: {}'.format(cc, error_msg))
+
+    to_do_map = {}
+    with futures.ThreadPoolExecutor(max_workers=max_req) as executor:
+        for cc in sorted(cc_list):
+            future = executor.submit(download_one, cc, load_url, verbose)
+            to_do_map[future] = cc
+
+        re_iter = futures.as_completed(to_do_map)
+        if not verbose:
+            re_iter = tqdm.tqdm(re_iter, total=len(cc_list))
+        for f in re_iter:
+            try:
+                res = f.result()
+            except requests.exceptions.HTTPError as exc:
+                error_msg = 'HTTP error {res.status_code} - {res.reason}'
+                error_msg = error_msg.format(res=exc.response)
+            except requests.exceptions.ConnectionError as exc:
+                error_msg = 'Connection error'
+            else:
+                error_msg = ''
+                status = res.status
+            if error_msg:
+                status = HTTPStatus.error
+            counter[status] += 1
+            if verbose and error_msg:  # <11>
+                print('*** Error for {}: {}'.format(cc, error_msg))
     return counter
 
 
