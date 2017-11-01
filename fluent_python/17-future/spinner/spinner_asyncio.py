@@ -9,6 +9,7 @@ SPIN_TIME = 7
 Event = namedtuple('Event', 'id status')
 
 
+@asyncio.coroutine
 def spin(msg):
     write, flush = sys.stdout.write, sys.stdout.flush
     for char in it.cycle('|/-\\'):
@@ -23,15 +24,16 @@ def spin(msg):
     write(' ' * len(status) + '\x08' * len(status))
 
 
+@asyncio.coroutine
 def wait_sus(t):
     """"""
     yield from asyncio.sleep(t)
 
     return 77
 
-
-def super_spin(loop):
-    spinner = loop.create_task(spin('thinking'))
+@asyncio.coroutine
+def super_spin():
+    spinner = asyncio.async(spin('thinking'))
     result = yield from wait_sus(SPIN_TIME)
     spinner.cancel()
     return result
@@ -39,7 +41,7 @@ def super_spin(loop):
 
 def main():
     loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(super_spin(loop))
+    result = loop.run_until_complete(super_spin())
     loop.close()
     print('Answer:', result)
 
