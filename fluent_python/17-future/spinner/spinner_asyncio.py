@@ -9,8 +9,8 @@ SPIN_TIME = 7
 Event = namedtuple('Event', 'id status')
 
 
-@asyncio.coroutine
-def spin(msg):
+#@asyncio.coroutine
+async def spin(msg):
     write, flush = sys.stdout.write, sys.stdout.flush
     for char in it.cycle('|/-\\'):
         status = char + ' ' + msg
@@ -18,24 +18,27 @@ def spin(msg):
         flush()
         write('\x08' * len(status))
         try:
-            yield from asyncio.sleep(.1)
+            await asyncio.sleep(.1)
         except asyncio.CancelledError:
             break
     write(' ' * len(status) + '\x08' * len(status))
 
 
-@asyncio.coroutine
-def wait_sus(t):
+#@asyncio.coroutine
+async def wait_sus(t):
     """"""
-    yield from asyncio.sleep(t)
+    await asyncio.sleep(t)
 
     return 77
 
 @asyncio.coroutine
 def super_spin():
     spinner = asyncio.async(spin('thinking'))
-    result = yield from wait_sus(SPIN_TIME)
+    yield from wait_sus(SPIN_TIME)
     spinner.cancel()
+    spinner2 = asyncio.async(spin('thinking2'))
+    result = yield from wait_sus(SPIN_TIME)
+    spinner2.cancel()
     return result
 
 
