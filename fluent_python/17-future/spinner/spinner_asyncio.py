@@ -5,11 +5,10 @@ import time
 import sys
 
 
-SPIN_TIME = 7
+SPIN_TIME = 2
 Event = namedtuple('Event', 'id status')
 
 
-#@asyncio.coroutine
 async def spin(msg):
     write, flush = sys.stdout.write, sys.stdout.flush
     for char in it.cycle('|/-\\'):
@@ -22,31 +21,32 @@ async def spin(msg):
         except asyncio.CancelledError:
             break
     write(' ' * len(status) + '\x08' * len(status))
+    return 'cancel'
 
 
-#@asyncio.coroutine
 async def wait_sus(t):
     """"""
+    # print('waiting ...')
     await asyncio.sleep(t)
 
     return 77
 
-@asyncio.coroutine
-def super_spin():
-    spinner = asyncio.async(spin('thinking'))
-    yield from wait_sus(SPIN_TIME)
+
+async def super_spin(loop):
+    spinner = asyncio.ensure_future(spin('thinking'))
+    await wait_sus(SPIN_TIME)
     spinner.cancel()
-    spinner2 = asyncio.async(spin('thinking2'))
-    result = yield from wait_sus(SPIN_TIME)
+    spinner2 = asyncio.ensure_future(spin('thinking2'))
+    result = await wait_sus(SPIN_TIME)
     spinner2.cancel()
-    return result
+    return spinner
 
 
 def main():
     loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(super_spin())
+    result = loop.run_until_complete(super_spin(loop))
     loop.close()
-    print('Answer:', result)
+    print(f'Answer at {time.time()}, result: {result.result()}')
 
 
 if __name__ == '__main__':
