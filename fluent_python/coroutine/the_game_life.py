@@ -19,17 +19,53 @@ class Grid(object):
             self.rows.append([EMPTY]*self.width)
 
     def __str__(self):
+        """
+        以空格连接各行的字符为一行字符， 以换行字符结束
+        Return:
+            返回格式化打印行：
+            _ _ O _ _ _ _ _ _
+            _ _ _ _ O _ _ _ _
+            _ _ O _ O _ _ _ _
+            _ _ _ _ O _ _ _ _
+            _ _ _ O _ _ _ _ _
+            _ _ _ _ O _ _ _ _
+            """
         str_rows = [' '.join(self.rows[i]) for i in range(self.height)]
         return '\n'.join(str_rows)
 
     def query(self, y, x):
+        """
+        返回查询结果
+        Param
+            y: int type, x axis
+            x: int type, y axis
+        Return:
+            statue of (x, y)
+
+        """
         return self.rows[y%self.height][x%self.width]
 
     def assign(self, y, x , state):
+        """
+
+        :param y:
+        :param x:
+        :param state:
+        :return:
+        """
         self.rows[y%self.height][x%self.width] = state
 
 
 def count_neighbors(y, x):
+    """
+    计算每个坐标周围8个方向值的状态
+    Param:
+        y: int type
+        x: int type
+    Return:
+        count ALIVE status
+    """
+    # co_routines func send val ro call fun and receive val from call send
     n_ = yield Query(y+1, x+0)
     ne = yield Query(y+1, x+1)
     e_ = yield Query(y+0, x+1)
@@ -80,6 +116,7 @@ def live_a_generation(grid, sim):
     while item is not TICK:
         if isinstance(item, Query):
             state = grid.query(item.y, item.x)
+            # receive value from
             item = sim.send(state)
         else:
             progeny.assign(item.y, item.x, item.state)
@@ -88,6 +125,9 @@ def live_a_generation(grid, sim):
 
 
 class ColumnPrinter(object):
+    """
+    
+    """
     def __init__(self):
         self.columns = []
 
@@ -97,20 +137,24 @@ class ColumnPrinter(object):
         return
 
 
-if __name__ == '__main__':
-    grid = Grid(5, 9)
+def run_game(grid_cls, sim):
+    """
+    run sim
+    """
+    grid = grid_cls(5, 9)
     grid.assign(0, 2, ALIVE)
     grid.assign(1, 4, ALIVE)
     grid.assign(2, 2, ALIVE)
     grid.assign(2, 3, ALIVE)
     grid.assign(2, 4, ALIVE)
     columns = ColumnPrinter()
-    sim = sim(grid.height, grid.width)
+    # 激活第一列周期图形
+    init_sim = sim(grid.height, grid.width)
     for _ in range(5):
         # print('in')
         columns.columns.append(str(grid))
         # print(columns.columns)
-        grid = live_a_generation(grid, sim)
+        grid = live_a_generation(grid, init_sim)
     # for r in columns.columns
     str_print = zip(*[columns.columns[i].split('\n')
                       for i in range(grid.height)])
@@ -118,3 +162,6 @@ if __name__ == '__main__':
     for r in str_print:
         str_ = '|'.join(r)
         print(str_)
+
+if __name__ == '__main__':
+    run_game(Grid, sim)
