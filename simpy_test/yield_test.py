@@ -4,6 +4,7 @@
 # from numpy.random import choice
 import random as rm
 import simpy
+from simpy.resources import store
 MAX = 10
 
 
@@ -95,13 +96,16 @@ class CarBcs(object):
     def run(self):
         self.env.run()
 
+def sim_delay(env):
+    yield env.timeout(1)
+    return 27
+
+
 if __name__ == '__main__':
-    # rm.seed(7)
-    # env = simpy.Environment()
-    # bsc = CarBcs(env, 5, 2)
-    # bsc.run()
-    f = fab(7)
-    for i in f:
-        print(i)
+
+    env = simpy.Environment()
+    cc = env.process(sim_delay(env))
+    env.run()
+    print(cc.value)
 
 
