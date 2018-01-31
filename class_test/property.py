@@ -10,7 +10,7 @@ class Fees(object):
     # ----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
-        self._fee = None
+        self.fee = None
 
     @property
     def fee(self):
@@ -29,6 +29,9 @@ class Fees(object):
             self._fee = Decimal(value)
         elif isinstance(value, Decimal):
             self._fee = value
+        else:
+            raise ValueError("no such fee expected!")
+
     @fee.deleter
     def fee(self):
         """"""

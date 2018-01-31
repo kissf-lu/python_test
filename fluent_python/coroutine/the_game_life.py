@@ -163,5 +163,6 @@ def run_game(grid_cls, sim):
         str_ = '|'.join(r)
         print(str_)
 
+
 if __name__ == '__main__':
     run_game(Grid, sim)
