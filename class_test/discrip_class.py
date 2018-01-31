@@ -18,13 +18,21 @@ class Integer:
 
     def __delete__(self, instance):
         del instance.__dict__[self.name]
+
 from collections import namedtuple
 
 class Point:
+    """
+    """
     x = Integer('x')
     y = Integer('y')
 
     def __init__(self, x, y):
+        """ integer class discrip
+        Arg:
+            x: ::type int
+            y: ::type int
+        """
         self.x = x
         self.y = y
 
