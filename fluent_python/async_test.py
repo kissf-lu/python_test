@@ -18,6 +18,7 @@ class AsyncIteratorWrapper:
             raise StopAsyncIteration
         return value
 
+
 class AsyncIterable:
     def __aiter__(self):
         return self
@@ -33,11 +34,12 @@ class AsyncIterable:
         pass
 
 
-@coroutine
-def async_run(it_st):
-    # cc = AsyncIteratorWrapper('ABC')
-    for i in it_st:
-        print(i)
+# @coroutine
+async def async_run(it_st):
+    await AsyncIteratorWrapper(it_st)
+
+    # for i in it_st:
+    #     print(i)
         # await asyncio.sleep(1)
     # raise StopAsyncIteration
 
@@ -62,8 +64,10 @@ async def read_await_base(file_dir):
 
 
 async def read_txt():
+    _dir = ('D:/CodeTest/python_test'
+    '/fluent_python/17-future/country/country_codes.txt')
     asyncio.ensure_future(
-        read_await_base('17-future/country/country_codes.txt'))
+        read_await_base(_dir))
 
 
 def main_async():
@@ -75,11 +79,14 @@ def main_async():
 
 @coroutine
 def generator_coroutine():
-    yield 1
+    _get = yield 'ok'
+    print(f'get value:{_get}')
 
 
 async def native_coroutine():
-    await generator_coroutine()
+    _receive = await generator_coroutine()
+    # return _receive
+
 
 def main():
     cc = native_coroutine().send(None)

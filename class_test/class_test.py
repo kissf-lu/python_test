@@ -1,51 +1,52 @@
 # -*- coding: utf-8 -*-
+""" module doc
 
+"""
 
 from os.path import realpath, join, split
 
 
 class SaveConfig:
+    """config set"""
+    DATA_DIR = join(
+        split(split(split(realpath(__file__))[0])[0])[0], 'data')
 
-    DATA_DIR = join( split(split(split(realpath(__file__))[0])[0])[0], 'data')
+class BaseName(object):
+    """A class ::base class"""
+    def __init__(self, name):
+        self.name = name
 
-class A(object):
-    def __init__(self, name_a):
-        print('enter A')
-        self.name = name_a
-        print('leave A')
+class NameB(BaseName):
+    """B class doc"""
+    def __init__(self, name):
+        """"init doc"""
+        super().__init__(name)
+        self.name *= 2
 
+class NameC(BaseName):
+    """C class doc"""
+    def __init__(self, name):
+        super().__init__(name)
+        self.name += 5
 
-class B(A):
-    def __init__(self,name_a):
-        print('enter B')
-        super().__init__(name_a)
-        print('leave B')
-    and_d = '\nrr'
+    def __repr__(self):
+        return f"NameC value is {self.name}"
 
+class NameD(NameB, NameC):
+    """from B C class"""
+    def __init__(self, name):
+        """D class"""
+        super().__init__(name)
 
-class C(A):
-    def __init__(self, name_a):
-        print('enter C')
-        super().__init__(name_a)
-        print('leave C')
+    def __repr__(self):
+        return f"value is {self.name}"
 
-
-class D(B, C):
-    def __init__(self, name_a):
-        print('enter D')
-        super().__init__(name_a)
-        print('leave D')
-
-    @property
-    def add_name(self):
-        return f"name sub is :{self.name}"
-
-
-
-
+def run():
+    """test run ccript api"""
+    name_thr = NameD(6)
+    name_c = NameC(7)
+    print(name_thr)
+    print(name_c)
 
 if __name__ == '__main__':
-        sub_d = D('A')
-        # bb = B('A')
-        # name = sub_d.add_name
-        # print(name, bb.and_d)
+    run()

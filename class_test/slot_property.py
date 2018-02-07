@@ -1,16 +1,26 @@
-#
+"""
+@author: chois
+"""
 
 
 class Person(object):
+    """class docstring"""
     def __init__(self, first_name):
+        """
+        preson docstring
+        """
         self.first_name = first_name
+        self._last_name = None
 
     # Getter function
     @property
     def last_name(self):
+        """
+        last name of people
+        """
         try:
             return self._last_name
-        except AttributeError as attr:
+        except AttributeError:
             raise AttributeError("you haven't init last_name")
 
     # Setter function
@@ -26,7 +36,7 @@ class Person(object):
         raise AttributeError("Can't delete attribute")
 
 
-p1 = Person('chois')
-p1.last_name = 'lu'
+CLU = Person('chois')
+CLU.last_name = 'lu'
 
-print(p1.first_name, p1.last_name)
+print(CLU.first_name, CLU.last_name)
