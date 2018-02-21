@@ -64,8 +64,9 @@ async def read_await_base(file_dir):
 
 
 async def read_txt():
-    _dir = ('D:/CodeTest/python_test'
-    '/fluent_python/17-future/country/country_codes.txt')
+    _dir = (
+        'D:/CodeTest/python_test'
+        '/fluent_python/17-future/country/country_codes.txt')
     asyncio.ensure_future(
         read_await_base(_dir))
 
